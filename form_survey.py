@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import re
 
 import streamlit as st
 import pandas as pd
@@ -65,12 +66,15 @@ if st.session_state.current_index == -1:
 
 Throughout this survey, you will review and assess several dialog instances between a tutor and a student. You will evaluate the tutor's responses based on three key criteria:
 
-Coherence: Are the tutor's responses logically consistent and easy to understand within the context of the dialogue?
-Care: Do the tutor's responses demonstrate empathy and a supportive attitude towards the student?
-Correctness: Are the responses accurate and relevant to the questions asked?
-Your insights are invaluable, and we appreciate your time and effort in helping us enhance the learning experience for everyone involved.
+- :link: **Coherence**: Are the tutor's responses logically consistent and easy to understand within the context of the dialogue?
+- :hugging_face: **Care**: Do the tutor's responses demonstrate empathy and a supportive attitude towards the student?
+- :white_check_mark: **Correctness**: Are the responses accurate and relevant to the questions asked?
 
-Thank you for participating in this important survey. Let's get started!""")
+Your insights are invaluable, and we appreciate your time and effort in helping us in our research.
+
+Thank you for participating in this important survey.  🙏
+
+Let's get started! 💪""")
     if st.button("Start"):
         st.session_state.current_index += 1
         st.rerun()
@@ -95,11 +99,20 @@ elif 0 <= st.session_state.current_index < len(df):
                     st.write(f"**Question:** {question}")
                 if "Options:" in part:
                     options = part.split("Options:")[1].split("</s>")[0].strip()
-                    st.write(f"**Options:** {options}")
-                    break
+                    option_list = options.split(", ")
+                    st.write("**Options:**")
+                    for option in option_list:
+                        st.write(f"- {option}")
+            pattern = r"which is :'(.*?)', by thinking"
+
+            match = re.search(pattern, instance['text'])
+
+            if match:
+                correct_answer = match.group(1)  # This is the extracted correct answer
+                st.write(f"**Correct answer:** {correct_answer}")
 
         with col2:
-            st.subheader(f"Dialog #{st.session_state.current_index}")
+            st.subheader(f"👉 Dialog #{st.session_state.current_index + 1}")
             turn_count = 0
             for turn in parts:
                 turn_count += 1
@@ -114,27 +127,30 @@ elif 0 <= st.session_state.current_index < len(df):
 
         st.divider()
         st.markdown("### Coherence :link: ")
-        coherence_response = st.select_slider(
-            f"coherence_rating_{st.session_state.current_index}",
+        st.caption('Coherent responses are logically consistent and relevant to the preceding dialogue. They make sense in the conversation and are easy to understand.')
+        coherence_response = st.radio(
+            "Coherence Rating",
             options=["Strongly Incoherent", "Incoherent", "Neutral", "Coherent", "Strongly Coherent"],
             label_visibility="collapsed",
-            help='Coherent responses are logically consistent and relevant to the preceding dialogue. They make sense in the conversation and are easy to understand.'
+            horizontal=True
         )
 
         st.markdown("### Care :hugging_face: ")
+        st.caption('Caring responses are responses that express kindness or concern for the student. They foster a collaborative and supportive relationship between the tutor and the student.')
         care_response = st.radio(
             "Care Rating",
             options=["Strongly Uncaring", "Uncaring", "Neutral", "Caring", "Strongly Caring"],
             horizontal=True,
-            help='Caring responses are responses that express kindness or concern for the student. They foster a collaborative and supportive relationship between the tutor and the student.'
+            label_visibility="collapsed"
         )
 
         st.markdown("### Correctness :white_check_mark: ")
         st.caption('Correct responses are accurate and aligned with the passage and question at hand.')
-        correctness_response = st.select_slider(
-            f"correctness_rating_{st.session_state.current_index}",
+        correctness_response = st.radio(
+            "Correctness Rating",
             options=["Strongly Incorrect", "Incorrect", "Neutral", "Correct", "Strongly Correct"],
-            label_visibility="collapsed"
+            label_visibility="collapsed",
+            horizontal=True
         )
         responses = {'care_rating': care_response, 'correctness_rating': correctness_response,
                      'coherence_rating': coherence_response}
@@ -143,6 +159,7 @@ elif 0 <= st.session_state.current_index < len(df):
             save_response(responses, instance_id=int(instance['__index_level_0__']))
             st.session_state.current_index += 1
             st.rerun()
+
 elif st.session_state.current_index >= len(df):
     st.balloons()
     st.success("Thank you for completing the survey! 🙏 :sparkles: ")
