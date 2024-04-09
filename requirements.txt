@@ -38,7 +38,6 @@ mistune==2.0.5
 nbconvert==7.2.9
 neologdn==0.5.1
 numpy==1.26.4
-ollama==0.1.8
 orjson==3.10.0
 packaging==23.2
 pandas==2.2.1
