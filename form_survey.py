@@ -63,11 +63,12 @@ st.title("Tutor Dialog Evaluation")
 if st.session_state.current_index == -1:
     st.markdown("""**Welcome to our Tutor Dialog Evaluation survey!** As a participant, you have a unique opportunity to contribute to improving the quality of research in educational technology applications. Your feedback will help us understand the effectiveness of our tutoring dialogs in terms of coherence, care, and correctness.
 
-Throughout this survey, you will review and assess several dialog instances between a tutor and a student. You will evaluate the tutor's responses based on three key criteria:
+Throughout this survey, you will review and assess several dialog instances between a tutor and a student. You will evaluate the tutor's responses based on four key criteria:
 
 - :link: **Coherence**: Are the tutor's responses logically consistent and easy to understand within the context of the dialogue?
 - :hugging_face: **Care**: Do the tutor's responses demonstrate empathy and a supportive attitude towards the student?
 - :white_check_mark: **Correctness**: Are the responses accurate and relevant to the questions asked?
+- :seedling: **Usage of Growth Mindset Supportive Language**: Does the tutor use language that is empathetic, empowering, or fosters collaborative problem-solving?
 
 Your insights are invaluable, and we appreciate your time and effort in helping us in our research.
 
