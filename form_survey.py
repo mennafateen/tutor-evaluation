@@ -7,7 +7,7 @@ import pandas as pd
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-st.set_page_config(page_title=None, page_icon="📝", layout="wide", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title="Tutor Dialog Evaluation Survey", page_icon="📝", layout="wide", initial_sidebar_state="auto", menu_items=None)
 query_params = st.query_params.to_dict()
 st.session_state.prolific_id = query_params["id"] if "id" in query_params else str(uuid.uuid4())
 
@@ -23,7 +23,6 @@ def extract_passage(text):
 
 
 df = pd.read_csv("selected_instances.csv")
-df = df.head()
 if 'prolific_id' not in st.session_state:
     st.session_state.prolific_id = None
 if 'current_index' not in st.session_state:
@@ -126,11 +125,12 @@ elif 0 <= st.session_state.current_index < len(df):
                         st.markdown(f":gray[{turn_text}]")
 
         st.divider()
+        st.write("Rate the coherence, care and correctness of the tutor's responses.")
         st.markdown("### Coherence :link: ")
         st.caption('Coherent responses are logically consistent and relevant to the preceding dialogue. They make sense in the conversation and are easy to understand.')
         coherence_response = st.radio(
             "Coherence Rating",
-            options=["Strongly Incoherent", "Incoherent", "Neutral", "Coherent", "Strongly Coherent"],
+            options=["Strongly Coherent", "Coherent", "Neutral", "Incoherent", "Strongly Incoherent"],
             label_visibility="collapsed",
             horizontal=True
         )
@@ -139,7 +139,7 @@ elif 0 <= st.session_state.current_index < len(df):
         st.caption('Caring responses are responses that express kindness or concern for the student. They foster a collaborative and supportive relationship between the tutor and the student.')
         care_response = st.radio(
             "Care Rating",
-            options=["Strongly Uncaring", "Uncaring", "Neutral", "Caring", "Strongly Caring"],
+            options=["Strongly Caring", "Caring", "Neutral", "Uncaring", "Strongly Uncaring"],
             horizontal=True,
             label_visibility="collapsed"
         )
@@ -148,12 +148,23 @@ elif 0 <= st.session_state.current_index < len(df):
         st.caption('Correct responses are accurate and aligned with the passage and question at hand.')
         correctness_response = st.radio(
             "Correctness Rating",
-            options=["Strongly Incorrect", "Incorrect", "Neutral", "Correct", "Strongly Correct"],
+            options=["Strongly Correct", "Correct", "Neutral", "Incorrect", "Strongly Incorrect"],
+            label_visibility="collapsed",
+            horizontal=True
+        )
+        st.divider()
+        st.write("Rate the overall usage of GMSL (Growth Mindset Supportive Language) in the dialog.")
+        st.markdown('### Usage of GMSL :seedling:')
+
+        st.caption("Responses that use Growth Mindset Supportive Language (GMSL) are empathetic, empowering, or foster collaborative problem-solving, aiming to validate emotions, reframe challenges as opportunities for growth, and encourage autonomy in students' learning journeys.")
+        gmsl_response = st.radio(
+            "GMSL",
+            options=["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"],
             label_visibility="collapsed",
             horizontal=True
         )
         responses = {'care_rating': care_response, 'correctness_rating': correctness_response,
-                     'coherence_rating': coherence_response}
+                     'coherence_rating': coherence_response, 'gmsl_usage': gmsl_response}
         submit_response = st.form_submit_button(label='Submit', use_container_width=True)
         if submit_response:
             save_response(responses, instance_id=int(instance['__index_level_0__']))
@@ -163,3 +174,5 @@ elif 0 <= st.session_state.current_index < len(df):
 elif st.session_state.current_index >= len(df):
     st.balloons()
     st.success("Thank you for completing the survey! 🙏 :sparkles: ")
+    st.link_button(url="https://app.prolific.com/submissions/complete?cc=C3N4HRXV", label="Complete Prolific Study")
+    st.write("This is your Prolific completion code: C3N4HRXV")
