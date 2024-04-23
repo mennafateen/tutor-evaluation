@@ -69,7 +69,8 @@ def save_response(responses, instance_id):
 
 st.title("Tutor Dialog Evaluation")
 if st.session_state.current_index == -1:
-    st.markdown("""**Welcome to our Tutor Dialog Evaluation survey!** As a participant, you have a unique opportunity to contribute to improving the quality of research in educational technology applications. Your feedback will help us understand the effectiveness of our tutoring dialogs in terms of coherence, care, and correctness.
+    st.markdown("""
+    **Welcome to our Tutor Dialog Evaluation survey!** As a participant, you have a unique opportunity to contribute to improving the quality of research in educational technology applications. Your feedback will help us understand the effectiveness of our tutoring dialogs in terms of coherence, care, and correctness.
 
 Throughout this survey, you will review and assess several dialog instances between a tutor and a student. You will evaluate the tutor's responses based on four key criteria:
 
@@ -83,6 +84,8 @@ Your insights are invaluable, and we appreciate your time and effort in helping 
 Thank you for participating in this important survey.  🙏
 
 Let's get started! 💪""")
+    st.warning("**⚠️ Please do not close or refresh the browser window/tab until you have completed the survey, "
+               "as you will not be able to resume the survey from where you left off.**")
 
     if st.button("Start"):
         st.session_state.current_index += 1
