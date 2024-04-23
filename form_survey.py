@@ -1,6 +1,7 @@
 import datetime
 import uuid
 import re
+import time
 
 import streamlit as st
 import pandas as pd
@@ -11,6 +12,13 @@ st.set_page_config(page_title="Tutor Dialog Evaluation Survey", page_icon="📝"
 query_params = st.query_params.to_dict()
 st.session_state.prolific_id = query_params["id"] if "id" in query_params else str(uuid.uuid4())
 
+js = '''
+<script>
+    var body = window.parent.document.querySelector(".main");
+    console.log(body);
+    body.scrollTop = 0;
+</script>
+'''
 
 def extract_passage(text):
     start_keyword = "Remember, short sentences and clear hints are key."
@@ -75,6 +83,7 @@ Your insights are invaluable, and we appreciate your time and effort in helping 
 Thank you for participating in this important survey.  🙏
 
 Let's get started! 💪""")
+
     if st.button("Start"):
         st.session_state.current_index += 1
         st.rerun()
@@ -169,6 +178,11 @@ elif 0 <= st.session_state.current_index < len(df):
         submit_response = st.form_submit_button(label='Submit', use_container_width=True)
         if submit_response:
             save_response(responses, instance_id=int(instance['__index_level_0__']))
+            temp = st.empty()
+            with temp:
+                st.components.v1.html(js)
+                time.sleep(.5)  # To make sure the script can execute before being deleted
+            temp.empty()
             st.session_state.current_index += 1
             st.rerun()
 
